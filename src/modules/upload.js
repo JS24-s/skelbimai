@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const isUploadPage = window.location.pathname.includes('upload.html');
 
     const adsContainer = document.getElementById('adsContainer');
-
+    const loggedIn = true; // Čia priskiriate reikiamą prisijungimo būseną
     // Funkcija skirta skelbimų parodymui
     function renderAds() {
         // Išvalome esamą turinį
@@ -17,14 +17,7 @@ document.addEventListener("DOMContentLoaded", function() {
         ads.forEach(ad => {
             const adElement = document.createElement('div');
             adElement.classList.add('card', 'mb-3');
-            adElement.innerHTML = `
-                <div class="card-body">
-                    <h3 class="card-title">${ad.title}</h3>
-                    <p class="card-text">${ad.description}</p>
-                    <p><strong>Kaina: </strong>${ad.price} EUR</p>
-                </div>
-            `;
-
+            // Sukuriamas skelbimo elementas
             const imagesDiv = document.createElement('div');
             ad.images.forEach(imageSrc => {
                 const imgElement = document.createElement('img');
@@ -34,9 +27,50 @@ document.addEventListener("DOMContentLoaded", function() {
                 imagesDiv.appendChild(imgElement);
             });
             adElement.appendChild(imagesDiv);
+
+
+            // Title, Description, Price
+            const adDetails = document.createElement('div');
+            adDetails.classList.add('card-body');
+            adDetails.innerHTML = `
+                <h3 class="card-title">${ad.title}</h3>
+                <p class="card-text">${ad.description}</p>
+                <p><strong>Kaina: </strong>${ad.price} EUR</p>
+                
+            `;
+            // Tik jei vartotojas yra prisijungęs ir ne pagrindiniame puslapyje, pridėkite mygtukus "Ištrinti" ir "Redaguoti"
+            if (loggedIn && !isIndexPage) {
+                adDetails.innerHTML += `
+                    <button class="btn btn-danger btn-sm delete-btn" data-id="${ad.id}">Ištrinti</button>
+                    <button class="btn btn-primary btn-sm edit-btn" data-id="${ad.id}">Redaguoti</button>
+                `;
+            }
+            
+
+            adElement.appendChild(adDetails);
+            
             adsContainer.appendChild(adElement);
         });
     }
+
+    // Kodas palengvinantis skelbimų ištrynimą
+    adsContainer.addEventListener('click', function(e) {
+        if (e.target.classList.contains('delete-btn')) {
+            const adId = parseInt(e.target.getAttribute('data-id'));
+            // Ištrinama skelbimo informacija iš localStorage
+            const ads = JSON.parse(localStorage.getItem('ads')) || [];
+
+            // Atnaujinamas skelbimų sąrašas, ištrinant pasirinktą skelbimą
+            const updatedAds = ads.filter(ad => ad.id !== adId);
+            localStorage.setItem('ads', JSON.stringify(updatedAds));
+
+            // Atvaizduojame atnaujintus skelbimus
+            renderAds();
+
+            // Patvirtinimas, kad skelbimas buvo sėkmingai ištrintas
+            console.log('Skelbimas sėkmingai ištrintas!');
+        }
+    });
 
     // Rodo esamus skelbimus puslapio atidarymo metu
     if (isIndexPage || isUploadPage) {
@@ -45,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (isUploadPage) {
         const uploadForm = document.getElementById('uploadForm');
-
+        
         // Pridedamo skelbimo funkcionalumas
         uploadForm.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -91,3 +125,4 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 });
+
