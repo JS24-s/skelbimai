@@ -12,22 +12,51 @@
         <!-- Header content or leave empty if it will be added dynamically by JS -->
     </header>
     <main class="container mt-4">
+        <h2>Įkelkite savo skelbimą:</h2>
         <form id="uploadForm">
             <div class="form-group">
-                <label for="title">Skelbimo pavadinimas:</label>
+                <label for="title">Markė:</label>
                 <input type="text" class="form-control" id="title" name="title" required>
             </div>
             <div class="form-group">
-                <label for="description">Aprašymas:</label>
-                <textarea class="form-control" id="description" name="description" required></textarea>
+                <label for="model">Modelis:</label>
+                <input type="text" class="form-control" id="model" name="model" required>
             </div>
             <div class="form-group">
                 <label for="price">Kaina:</label>
                 <input type="number" class="form-control" id="price" name="price" required>
             </div>
             <div class="form-group">
-                <label for="image">Nuotraukos:</label>
-                <input type="file" class="form-control-file" id="image" name="image[]" multiple required>
+                <label for="year">Metai:</label>
+                <input type="number" class="form-control" id="year" name="year" required>
+            </div>
+            <div class="form-group">
+                <label for="mileage">Rida:</label>
+                <input type="number" class="form-control" id="mileage" name="mileage" required>
+            </div>
+            <div class="form-group">
+                <label for="engine">Variklis:</label>
+                <input type="number" class="form-control" id="engine" name="engine" required>
+            </div>
+            <div class="form-group">
+                <label for="color">Spalva:</label>
+                <input type="text" class="form-control" id="color" name="color" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Aprašymas:</label>
+                <textarea class="form-control" id="description" name="description" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="image1">Nuotrauka 1:</label>
+                <input type="file" class="form-control-file" id="image1" name="image1">
+            </div>
+            <div class="form-group">
+                <label for="image2">Nuotrauka 2:</label>
+                <input type="file" class="form-control-file" id="image2" name="image2">
+            </div>
+            <div class="form-group">
+                <label for="image3">Nuotrauka 3:</label>
+                <input type="file" class="form-control-file" id="image3" name="image3">
             </div>
             <button type="submit" class="btn btn-primary">Įkelti skelbimą</button>
         </form>
@@ -45,4 +74,3 @@
     <script src="js/upload.js"></script>
 </body>
 </html>
-
