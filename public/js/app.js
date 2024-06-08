@@ -38323,20 +38323,33 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 
- // Importuojame teisingą `createPopper` funkciją
+
 
 
 window.Popper = {
   createPopper: _popperjs_core__WEBPACK_IMPORTED_MODULE_4__.createPopper
 };
 window.$ = window.jQuery = (jquery__WEBPACK_IMPORTED_MODULE_1___default());
-var currentUser = JSON.parse(localStorage.getItem('user'));
-console.log('Current User:', currentUser);
+var currentUser = null;
+(0,firebase_auth__WEBPACK_IMPORTED_MODULE_3__.onAuthStateChanged)(_firebase_config__WEBPACK_IMPORTED_MODULE_2__.auth, function (user) {
+  if (user) {
+    currentUser = user;
+    localStorage.setItem('user', JSON.stringify({
+      email: user.email
+    }));
+    console.log('Current User:', user);
+  } else {
+    currentUser = null;
+    localStorage.removeItem('user');
+    console.log('No user is signed in');
+  }
+});
 function renderHeader() {
   console.log('Rendering header');
   jquery__WEBPACK_IMPORTED_MODULE_1___default()('#header').empty();
-  if (currentUser && currentUser.email) {
-    if (currentUser.email === "admin@example.com") {
+  var storedUser = JSON.parse(localStorage.getItem('user'));
+  if (storedUser && storedUser.email) {
+    if (storedUser.email === "admin@example.com") {
       console.log('User is admin');
       jquery__WEBPACK_IMPORTED_MODULE_1___default()('#header').html("\n                <nav class=\"navbar navbar-expand-lg navbar-dark bg-dark\">\n                    <a class=\"navbar-brand\" href=\"index.html\">Skelbim\u0173 puslapis</a>\n                    <button class=\"navbar-toggler\" type=\"button\" data-toggle=\"collapse\" data-target=\"#navbarNav\" aria-controls=\"navbarNav\" aria-expanded=\"false\" aria-label=\"Toggle navigation\">\n                        <span class=\"navbar-toggler-icon\"></span>\n                    </button>\n                    <div class=\"collapse navbar-collapse\" id=\"navbarNav\">\n                        <ul class=\"navbar-nav\">\n                            <li class=\"nav-item\"><a class=\"nav-link\" href=\"index.html\">Pagrindinis</a></li>\n                            <li class=\"nav-item\"><a class=\"nav-link\" href=\"admin.html\">Admin Panel</a></li>\n                            <li class=\"nav-item\"><a class=\"nav-link\" id=\"logoutLink\" href=\"#\">Atsijungti</a></li>\n                        </ul>\n                    </div>\n                </nav>\n            ");
     } else {
@@ -38451,38 +38464,79 @@ jquery__WEBPACK_IMPORTED_MODULE_1___default()(document).ready(function () {
       };
     }());
   } else if (currentPath.includes('upload.html') && currentUser) {
-    jquery__WEBPACK_IMPORTED_MODULE_1___default()('#uploadForm').on('submit', function (e) {
-      e.preventDefault();
-      var title = jquery__WEBPACK_IMPORTED_MODULE_1___default()('#title').val();
-      var description = jquery__WEBPACK_IMPORTED_MODULE_1___default()('#description').val();
-      var price = jquery__WEBPACK_IMPORTED_MODULE_1___default()('#price').val();
-      var files = jquery__WEBPACK_IMPORTED_MODULE_1___default()('#image')[0].files;
-      var ads = JSON.parse(localStorage.getItem('ads')) || [];
-      var newAd = {
-        id: ads.length + 1,
-        title: title,
-        description: description,
-        images: [],
-        price: price,
-        user: currentUser.email
-      };
-      for (var i = 0; i < files.length; i++) {
-        var reader = new FileReader();
-        reader.onload = function (event) {
-          newAd.images.push(event.target.result);
-          if (newAd.images.length === files.length) {
-            ads.push(newAd);
-            localStorage.setItem('ads', JSON.stringify(ads));
-            alert('Skelbimas sėkmingai įkeltas!');
-            window.location.href = 'index.html';
+    jquery__WEBPACK_IMPORTED_MODULE_1___default()('#uploadForm').on('submit', /*#__PURE__*/function () {
+      var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(e) {
+        var title, description, price, files, newAd, imagesProcessed, i, reader;
+        return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+          while (1) switch (_context5.prev = _context5.next) {
+            case 0:
+              e.preventDefault();
+              title = jquery__WEBPACK_IMPORTED_MODULE_1___default()('#title').val();
+              description = jquery__WEBPACK_IMPORTED_MODULE_1___default()('#description').val();
+              price = jquery__WEBPACK_IMPORTED_MODULE_1___default()('#price').val();
+              files = jquery__WEBPACK_IMPORTED_MODULE_1___default()('#image')[0].files;
+              newAd = {
+                title: title,
+                description: description,
+                price: price,
+                images: [],
+                user: currentUser.email
+              };
+              imagesProcessed = 0;
+              for (i = 0; i < files.length; i++) {
+                reader = new FileReader();
+                reader.onload = /*#__PURE__*/function () {
+                  var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(event) {
+                    var docRef;
+                    return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+                      while (1) switch (_context4.prev = _context4.next) {
+                        case 0:
+                          newAd.images.push(event.target.result);
+                          imagesProcessed++;
+                          if (!(imagesProcessed === files.length)) {
+                            _context4.next = 17;
+                            break;
+                          }
+                          _context4.prev = 3;
+                          _context4.next = 6;
+                          return addDoc(collection(db, "ads"), newAd);
+                        case 6:
+                          docRef = _context4.sent;
+                          console.log("Document written with ID: ", docRef.id);
+                          uploadForm.reset();
+                          renderAds();
+                          alert('Skelbimas sėkmingai įkeltas!');
+                          window.location.href = 'index.html';
+                          _context4.next = 17;
+                          break;
+                        case 14:
+                          _context4.prev = 14;
+                          _context4.t0 = _context4["catch"](3);
+                          console.error("Error adding document: ", _context4.t0);
+                        case 17:
+                        case "end":
+                          return _context4.stop();
+                      }
+                    }, _callee4, null, [[3, 14]]);
+                  }));
+                  return function (_x4) {
+                    return _ref5.apply(this, arguments);
+                  };
+                }();
+                reader.readAsDataURL(files[i]);
+              }
+            case 8:
+            case "end":
+              return _context5.stop();
           }
-        };
-        reader.readAsDataURL(files[i]);
-      }
-    });
+        }, _callee5);
+      }));
+      return function (_x3) {
+        return _ref4.apply(this, arguments);
+      };
+    }());
   }
 });
-//veikia
 
 /***/ }),
 
@@ -38505,7 +38559,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-// Naudokite Firebase konsolėje sugeneruotą konfigūraciją
+// Firebase konfigūracija
 var firebaseConfig = {
   apiKey: "AIzaSyCvr9t5rbNs2rhgMzgHE2oydsHkjow5B5k",
   authDomain: "skelbimu-puslapis-4fc42.firebaseapp.com",
@@ -38515,7 +38569,7 @@ var firebaseConfig = {
   appId: "1:376595467038:web:a906533295c6769813570f"
 };
 
-// Inicializuoti Firebase aplikacija
+// Inicializuoti Firebase
 var app = (0,firebase_app__WEBPACK_IMPORTED_MODULE_0__.initializeApp)(firebaseConfig);
 var auth = (0,firebase_auth__WEBPACK_IMPORTED_MODULE_1__.getAuth)(app);
 var db = (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.getFirestore)(app);

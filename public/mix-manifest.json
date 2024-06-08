@@ -5,10 +5,12 @@
     "/js/logout.js": "/js/logout.js",
     "/js/register.js": "/js/register.js",
     "/js/upload.js": "/js/upload.js",
+    "/js/ad.js": "/js/ad.js",
     "/css/app.css": "/css/app.css",
     "/index.html": "/index.html",
     "/upload.html": "/upload.html",
     "/login.html": "/login.html",
     "/register.html": "/register.html",
-    "/admin.html": "/admin.html"
+    "/admin.html": "/admin.html",
+    "/ad.html": "/ad.html"
 }
