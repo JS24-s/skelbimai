@@ -1,21 +1,34 @@
 import 'bootstrap/dist/js/bootstrap';
 import $ from 'jquery';
-import { createPopper } from '@popperjs/core'; // Importuojame teisingą `createPopper` funkciją
+import { createPopper } from '@popperjs/core';
 import { auth } from "./firebase-config";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "firebase/auth";
 
 window.Popper = { createPopper };
 window.$ = window.jQuery = $;
 
-const currentUser = JSON.parse(localStorage.getItem('user'));
-console.log('Current User:', currentUser);
+let currentUser = null;
+
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        currentUser = user;
+        localStorage.setItem('user', JSON.stringify({ email: user.email }));
+        console.log('Current User:', user);
+    } else {
+        currentUser = null;
+        localStorage.removeItem('user');
+        console.log('No user is signed in');
+    }
+});
 
 function renderHeader() {
     console.log('Rendering header');
     $('#header').empty();
 
-    if (currentUser && currentUser.email) {
-        if (currentUser.email === "admin@example.com") {
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+
+    if (storedUser && storedUser.email) {
+        if (storedUser.email === "admin@example.com") {
             console.log('User is admin');
             $('#header').html(`
                 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -121,32 +134,40 @@ $(document).ready(function() {
             }
         });
     } else if (currentPath.includes('upload.html') && currentUser) {
-        $('#uploadForm').on('submit', function(e) {
+        $('#uploadForm').on('submit', async function(e) {
             e.preventDefault();
             const title = $('#title').val();
             const description = $('#description').val();
             const price = $('#price').val();
             const files = $('#image')[0].files;
 
-            let ads = JSON.parse(localStorage.getItem('ads')) || [];
-            let newAd = {
-                id: ads.length + 1,
+            const newAd = {
                 title: title,
                 description: description,
-                images: [],
                 price: price,
+                images: [],
                 user: currentUser.email
             };
 
+            let imagesProcessed = 0;
+
             for (let i = 0; i < files.length; i++) {
-                let reader = new FileReader();
-                reader.onload = function(event) {
+                const reader = new FileReader();
+                reader.onload = async function(event) {
                     newAd.images.push(event.target.result);
-                    if (newAd.images.length === files.length) {
-                        ads.push(newAd);
-                        localStorage.setItem('ads', JSON.stringify(ads));
-                        alert('Skelbimas sėkmingai įkeltas!');
-                        window.location.href = 'index.html';
+                    imagesProcessed++;
+
+                    if (imagesProcessed === files.length) {
+                        try {
+                            const docRef = await addDoc(collection(db, "ads"), newAd);
+                            console.log("Document written with ID: ", docRef.id);
+                            uploadForm.reset();
+                            renderAds();
+                            alert('Skelbimas sėkmingai įkeltas!');
+                            window.location.href = 'index.html';
+                        } catch (e) {
+                            console.error("Error adding document: ", e);
+                        }
                     }
                 };
                 reader.readAsDataURL(files[i]);
@@ -154,4 +175,3 @@ $(document).ready(function() {
         });
     }
 });
-//veikia
