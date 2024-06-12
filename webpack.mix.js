@@ -7,6 +7,7 @@ mix.js('src/modules/app.js', 'public/js')
    .js('src/modules/register.js', 'public/js')
    .js('src/modules/upload.js', 'public/js')
    .js('src/modules/ad.js', 'public/js')  // Pridėta nauja JavaScript byla
+   .js('src/modules/search.js', 'public/js')  // Pridėta nauja JavaScript byla
    .sass('src/scss/app.scss', 'public/css')
    .copy('src/index.html', 'public/index.html')
    .copy('src/upload.html', 'public/upload.html')
