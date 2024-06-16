@@ -13,5 +13,6 @@
     "/login.html": "/login.html",
     "/register.html": "/register.html",
     "/admin.html": "/admin.html",
-    "/ad.html": "/ad.html"
+    "/ad.html": "/ad.html",
+    "/category.html": "/category.html"
 }

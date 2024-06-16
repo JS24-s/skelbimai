@@ -2,24 +2,17 @@ import { db } from "./firebase-config";
 import { collection, getDocs } from "firebase/firestore";
 
 document.addEventListener("DOMContentLoaded", function() {
-    const isIndexPage = window.location.pathname.includes('index.html') || window.location.pathname === '/';
-    if (isIndexPage) {
-        renderAds();
+    const urlParams = new URLSearchParams(window.location.search);
+    const category = urlParams.get('category');
+
+    if (category) {
+        filterAdsByCategory(category);
     }
 
     const searchInput = document.getElementById('search');
     if (searchInput) {
         searchInput.addEventListener('input', filterAds);
     }
-
-    const categoryLinks = document.querySelectorAll('.list-group-item a');
-    categoryLinks.forEach(link => {
-        link.addEventListener('click', function(event) {
-            event.preventDefault();
-            const category = decodeURIComponent(this.getAttribute('href').split('=')[1]);
-            filterAdsByCategory(category);
-        });
-    });
 });
 
 async function filterAds() {

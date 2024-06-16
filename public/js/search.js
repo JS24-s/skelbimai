@@ -40744,9 +40744,16 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   var searchInput = document.getElementById('search');
   if (searchInput) {
-    // Priskirkite įvykį „input“, kad kiekvieną kartą kai vartotojas įveda tekstą, būtų filtruojami skelbimai
     searchInput.addEventListener('input', filterAds);
   }
+  var categoryLinks = document.querySelectorAll('.list-group-item a');
+  categoryLinks.forEach(function (link) {
+    link.addEventListener('click', function (event) {
+      event.preventDefault();
+      var category = decodeURIComponent(this.getAttribute('href').split('=')[1]);
+      filterAdsByCategory(category);
+    });
+  });
 });
 function filterAds() {
   return _filterAds.apply(this, arguments);
@@ -40769,7 +40776,7 @@ function _filterAds() {
             }, doc.data());
           });
           filteredAds = ads.filter(function (ad) {
-            return ad.title.toLowerCase().includes(query) || ad.description.toLowerCase().includes(query) || ad.price.toString().includes(query);
+            return ad.title.toLowerCase().includes(query) || ad.description.toLowerCase().includes(query) || ad.price.toString().includes(query) || ad.category.toLowerCase().includes(query);
           });
           adsContainer.innerHTML = '';
           renderAds(filteredAds);
@@ -40781,37 +40788,69 @@ function _filterAds() {
   }));
   return _filterAds.apply(this, arguments);
 }
+function filterAdsByCategory(_x) {
+  return _filterAdsByCategory.apply(this, arguments);
+}
+function _filterAdsByCategory() {
+  _filterAdsByCategory = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(category) {
+    var adsContainer, querySnapshot, ads, filteredAds;
+    return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+      while (1) switch (_context2.prev = _context2.next) {
+        case 0:
+          adsContainer = document.getElementById('adsContainer');
+          _context2.next = 3;
+          return (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.getDocs)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.collection)(_firebase_config__WEBPACK_IMPORTED_MODULE_0__.db, "ads"));
+        case 3:
+          querySnapshot = _context2.sent;
+          ads = querySnapshot.docs.map(function (doc) {
+            return _objectSpread({
+              id: doc.id
+            }, doc.data());
+          });
+          filteredAds = ads.filter(function (ad) {
+            return ad.category === category;
+          });
+          adsContainer.innerHTML = '';
+          renderAds(filteredAds);
+        case 8:
+        case "end":
+          return _context2.stop();
+      }
+    }, _callee2);
+  }));
+  return _filterAdsByCategory.apply(this, arguments);
+}
 function renderAds() {
   return _renderAds.apply(this, arguments);
 }
 function _renderAds() {
-  _renderAds = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+  _renderAds = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
     var ads,
       adsContainer,
       querySnapshot,
       adsToRender,
       row,
-      _args2 = arguments;
-    return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-      while (1) switch (_context2.prev = _context2.next) {
+      _args3 = arguments;
+    return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+      while (1) switch (_context3.prev = _context3.next) {
         case 0:
-          ads = _args2.length > 0 && _args2[0] !== undefined ? _args2[0] : null;
+          ads = _args3.length > 0 && _args3[0] !== undefined ? _args3[0] : null;
           adsContainer = document.getElementById('adsContainer');
           adsContainer.innerHTML = '';
           if (!ads) {
-            _context2.next = 7;
+            _context3.next = 7;
             break;
           }
-          _context2.t0 = null;
-          _context2.next = 10;
+          _context3.t0 = null;
+          _context3.next = 10;
           break;
         case 7:
-          _context2.next = 9;
+          _context3.next = 9;
           return (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.getDocs)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_1__.collection)(_firebase_config__WEBPACK_IMPORTED_MODULE_0__.db, "ads"));
         case 9:
-          _context2.t0 = _context2.sent;
+          _context3.t0 = _context3.sent;
         case 10:
-          querySnapshot = _context2.t0;
+          querySnapshot = _context3.t0;
           adsToRender = ads || querySnapshot.docs.map(function (doc) {
             return _objectSpread({
               id: doc.id
@@ -40835,7 +40874,7 @@ function _renderAds() {
             adElement.appendChild(imagesDiv);
             var adDetails = document.createElement('div');
             adDetails.classList.add('card-body');
-            adDetails.innerHTML = "\n            <h5 class=\"card-title\">".concat(ad.title, "</h5>\n            <p class=\"card-text\">").concat(ad.description, "</p>\n            <p><strong>Kaina: </strong>").concat(ad.price, " EUR</p>\n            <a href=\"ad.html?id=").concat(ad.id, "\" class=\"btn btn-info btn-sm\">Per\u017Ei\u016Br\u0117ti</a>\n        ");
+            adDetails.innerHTML = "\n            <h5 class=\"card-title\">".concat(ad.title, "</h5>\n            <p class=\"card-text\">").concat(ad.description, "</p>\n            <p><strong>Kaina: </strong>").concat(ad.price, " EUR</p>\n            <p><strong>Kategorija: </strong>").concat(ad.category, "</p>\n            <a href=\"ad.html?id=").concat(ad.id, "\" class=\"btn btn-info btn-sm\">Per\u017Ei\u016Br\u0117ti</a>\n        ");
             adElement.appendChild(adDetails);
             col.appendChild(adElement);
             row.appendChild(col);
@@ -40849,22 +40888,12 @@ function _renderAds() {
           adsContainer.appendChild(row);
         case 16:
         case "end":
-          return _context2.stop();
+          return _context3.stop();
       }
-    }, _callee2);
+    }, _callee3);
   }));
   return _renderAds.apply(this, arguments);
 }
-document.addEventListener("DOMContentLoaded", function () {
-  var isIndexPage = window.location.pathname.includes('index.html') || window.location.pathname === '/';
-  if (isIndexPage) {
-    renderAds();
-  }
-  var searchInput = document.getElementById('search');
-  if (searchInput) {
-    searchInput.addEventListener('input', filterAds);
-  }
-});
 })();
 
 /******/ })()
