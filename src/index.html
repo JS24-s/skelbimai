@@ -13,22 +13,30 @@
     </header>
     <div class="container">
         <h1 class="my-4">Skelbimai</h1>
-        <div class="form-group">
-            <input type="text" id="search" placeholder="Ieškoti...">
-        </div>
-
-        <h1>Tavo skelbimų puslapis</h1>
-        <main class="container mt-4">
-            <div id="adsContainer" class="mt-4 row">
-                <!-- Turinio rodymas -->
+        <div class="row">
+            <div class="col-md-3">
+                <h4>Kategorijos</h4>
+                <ul class="list-group">
+                    <li class="list-group-item"><a href="category.html?category=Lengvieji%20automobiliai">Lengvieji automobiliai</a></li>
+                    <li class="list-group-item"><a href="category.html?category=Mikroautobusai">Mikroautobusai</a></li>
+                    <li class="list-group-item"><a href="category.html?category=Sunkioji%20technika">Sunkioji technika</a></li>
+                    <li class="list-group-item"><a href="category.html?category=Motociklai">Motociklai</a></li>
+                    <li class="list-group-item"><a href="category.html?category=Detalės">Detalės</a></li>
+                </ul>
             </div>
-        </main>
+            <div class="col-md-9">
+                <div class="form-group">
+                    <input type="text" id="search" placeholder="Ieškoti...">
+                </div>
+                <div id="adsContainer" class="mt-4 row">
+                    <!-- Turinio rodymas -->
+                </div>
+            </div>
+        </div>
     </div>
-
     <footer class="bg-dark text-white p-3 mt-5 text-center">
         <p>Visos teisės saugomos © 2023</p>
     </footer>
-
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

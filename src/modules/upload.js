@@ -47,6 +47,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <h5 class="card-title">${ad.title}</h5>
                 <p class="card-text">${ad.description}</p>
                 <p><strong>Kaina: </strong>${ad.price} EUR</p>
+                <p><strong>Kategorija: </strong>${ad.category}</p>
                 <a href="ad.html?id=${ad.id}" class="btn btn-info btn-sm">Peržiūrėti</a>
             `;
 
@@ -95,14 +96,16 @@ document.addEventListener("DOMContentLoaded", function() {
             const title = document.getElementById('title').value;
             const description = document.getElementById('description').value;
             const price = document.getElementById('price').value;
+            const category = document.getElementById('category').value;
             const files = document.getElementById('image').files;
 
-            console.log("Form data:", { title, description, price, files });
+            console.log("Form data:", { title, description, price, category, files });
 
             const newAd = {
                 title: title,
                 description: description,
                 price: price,
+                category: category,
                 images: []
             };
 

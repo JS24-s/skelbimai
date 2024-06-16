@@ -6,15 +6,16 @@ mix.js('src/modules/app.js', 'public/js')
    .js('src/modules/logout.js', 'public/js')
    .js('src/modules/register.js', 'public/js')
    .js('src/modules/upload.js', 'public/js')
-   .js('src/modules/ad.js', 'public/js')  // Pridėta nauja JavaScript byla
-   .js('src/modules/search.js', 'public/js')  // Pridėta nauja JavaScript byla
+   .js('src/modules/ad.js', 'public/js')
+   .js('src/modules/search.js', 'public/js')
    .sass('src/scss/app.scss', 'public/css')
    .copy('src/index.html', 'public/index.html')
    .copy('src/upload.html', 'public/upload.html')
    .copy('src/login.html', 'public/login.html')
    .copy('src/register.html', 'public/register.html')
    .copy('src/admin.html', 'public/admin.html')
-   .copy('src/ad.html', 'public/ad.html')  // Pridėta nauja HTML byla
+   .copy('src/ad.html', 'public/ad.html')
+   .copy('src/category.html', 'public/category.html')  // Pridėta nauja HTML byla
    .setPublicPath('public');
 
 mix.browserSync({
