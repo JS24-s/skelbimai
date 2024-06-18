@@ -9,17 +9,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const searchInput = document.getElementById('search');
     if (searchInput) {
+        // Priskirkite įvykį „input“, kad kiekvieną kartą kai vartotojas įveda tekstą, būtų filtruojami skelbimai
         searchInput.addEventListener('input', filterAds);
     }
-
-    const categoryLinks = document.querySelectorAll('.list-group-item a');
-    categoryLinks.forEach(link => {
-        link.addEventListener('click', function(event) {
-            event.preventDefault();
-            const category = decodeURIComponent(this.getAttribute('href').split('=')[1]);
-            filterAdsByCategory(category);
-        });
-    });
 });
 
 async function filterAds() {
@@ -33,22 +25,9 @@ async function filterAds() {
         return (
             ad.title.toLowerCase().includes(query) ||
             ad.description.toLowerCase().includes(query) ||
-            ad.price.toString().includes(query) ||
-            ad.category.toLowerCase().includes(query)
+            ad.price.toString().includes(query)
         );
     });
-
-    adsContainer.innerHTML = '';
-    renderAds(filteredAds);
-}
-
-async function filterAdsByCategory(category) {
-    const adsContainer = document.getElementById('adsContainer');
-
-    const querySnapshot = await getDocs(collection(db, "ads"));
-    const ads = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-    const filteredAds = ads.filter(ad => ad.category === category);
 
     adsContainer.innerHTML = '';
     renderAds(filteredAds);
@@ -87,7 +66,6 @@ async function renderAds(ads = null) {
             <h5 class="card-title">${ad.title}</h5>
             <p class="card-text">${ad.description}</p>
             <p><strong>Kaina: </strong>${ad.price} EUR</p>
-            <p><strong>Kategorija: </strong>${ad.category}</p>
             <a href="ad.html?id=${ad.id}" class="btn btn-info btn-sm">Peržiūrėti</a>
         `;
 
@@ -105,3 +83,14 @@ async function renderAds(ads = null) {
 
     adsContainer.appendChild(row);
 }
+document.addEventListener("DOMContentLoaded", function() {
+    const isIndexPage = window.location.pathname.includes('index.html') || window.location.pathname === '/';
+    if (isIndexPage) {
+        renderAds();
+    }
+
+    const searchInput = document.getElementById('search');
+    if (searchInput) {
+        searchInput.addEventListener('input', filterAds);
+    }
+});
